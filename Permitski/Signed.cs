@@ -13,6 +13,8 @@ namespace Permitski
             Signature = signature;
         }
 
-        public override string ToString() => JsonConvert.SerializeObject(this, Formatting.Indented);
+        public override string ToString() => ToString(compact: false);
+
+        public string ToString(bool compact) => JsonConvert.SerializeObject(this, compact ? Formatting.None : Formatting.Indented);
     }
 }
