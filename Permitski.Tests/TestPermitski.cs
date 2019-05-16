@@ -105,5 +105,39 @@ namespace Permitski.Tests
 
             Assert.That(signer1.IsValid(signed2.ToString()), Is.False);
         }
+
+        [TestCase(@"
+
+{
+  ""Document"": {
+    ""Text"": ""okkergokkergummiklokker""
+  },
+  ""Signature"": ""l8RlgY4WZF0iDfgOh3ftCgfr/eicN2ltBEhOXhPTlIs=""
+}
+
+")]
+        [TestCase(@"
+
+{
+  ""Signature"": ""l8RlgY4WZF0iDfgOh3ftCgfr/eicN2ltBEhOXhPTlIs="",
+  ""Document"": {
+    ""Text"": ""okkergokkergummiklokker""
+  }
+}
+
+")]
+        [TestCase(@"{""Signature"": ""l8RlgY4WZF0iDfgOh3ftCgfr/eicN2ltBEhOXhPTlIs="",""Document"": {""Text"": ""okkergokkergummiklokker""}}")]
+        public void CanCheckSignature_Json_Reformatting(string jsonDocumentWithValidSignature)
+        {
+            const string key = "TNm1TDf3V5lLHZRFU3rGmC+9u3pIfuOOB0tmTpWXvLQ=|S+UfLmShvBPL56JkdgKyFg==";
+
+            var signer = Using(new DocumentSigner(key));
+
+            Console.WriteLine($@"Checking this variation:
+
+{jsonDocumentWithValidSignature}");
+
+            Assert.That(signer.IsValid(jsonDocumentWithValidSignature), Is.True);
+        }
     }
 }

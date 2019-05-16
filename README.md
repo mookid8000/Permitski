@@ -40,13 +40,9 @@ Let's sign it, so we can give it to someone:
 ```csharp
 var importantData = new ImportantData("hemmelig");
 
-var key = DocumentSigner.GenerateKey();
-using (var signer = new DocumentSigner(key))
-{
-    var signed = signer.Sign(importantData);
+var signed = signer.Sign(importantData);
 
-    Console.WriteLine(signed);
-}
+Console.WriteLine(signed);
 ```
 
 which in this case yielded the following output:
@@ -63,14 +59,12 @@ which in this case yielded the following output:
 Let's see if it's valid - if we store the JSON shown above in a string called `json`, we can check its validity like this:
 
 ```csharp
-using (var signer = new DocumentSigner(key))
-{
-    Console.WriteLine($"The document is valid: {signer.IsValid(json)}");
-}
+Console.WriteLine($"The document is valid: {signer.IsValid(json)}");
 ```
 which on my machine yielded:
 ```
 The document is valid: True
 ```
 
+Neat!
 
