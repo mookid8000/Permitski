@@ -11,3 +11,7 @@
 ## 0.0.4
 
 * Make it possible to use single-quotes in default output
+
+## 0.0.5
+
+* Add deserializer

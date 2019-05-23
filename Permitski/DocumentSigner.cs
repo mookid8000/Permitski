@@ -22,10 +22,27 @@ namespace Permitski
             _cryptoServiceProvider = Crypto.GetFromKey(key);
         }
 
-        public Signed<T> Sign<T>(T document)
+        public Signed<TDocument> Sign<TDocument>(TDocument document)
         {
             if (document == null) throw new ArgumentNullException(nameof(document));
-            return new Signed<T>(document, GenerateSignatureFromObject(document));
+            return new Signed<TDocument>(document, GenerateSignatureFromObject(document));
+        }
+
+        public Signed<TDocument> Deserialize<TDocument>(string json)
+        {
+            Signed<TDocument> Parse()
+            {
+                try
+                {
+                    return JsonConvert.DeserializeObject<Signed<TDocument>>(json);
+                }
+                catch (Exception exception)
+                {
+                    throw new FormatException("Could not parse JSON document (which is not included here for privacy reasons)", exception);
+                }
+            }
+
+            return Parse();
         }
 
         public bool IsValid(string json)
@@ -52,7 +69,7 @@ namespace Permitski
             }
         }
 
-        public bool IsValid<T>(Signed<T> signed)
+        public bool IsValid<TDocument>(Signed<TDocument> signed)
         {
             if (signed == null) throw new ArgumentNullException(nameof(signed));
             var actualSignature = GenerateSignatureFromObject(signed.Document);

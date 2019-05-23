@@ -139,5 +139,31 @@ namespace Permitski.Tests
 
             Assert.That(signer.IsValid(jsonDocumentWithValidSignature), Is.True);
         }
+
+        [Test]
+        public void CanDeserializeDocument()
+        {
+            var signer = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
+
+            const string importantText = "blah blah blah important blah blah";
+            
+            var signed = signer.Sign(new MyDoc(importantText));
+
+            var json = signed.ToString();
+
+            var roundtrippedSignedDocument = signer.Deserialize<MyDoc>(json);
+
+            Assert.That(roundtrippedSignedDocument.Document.Text, Is.EqualTo(importantText));
+        }
+
+        class MyDoc
+        {
+            public string Text { get; }
+
+            public MyDoc(string text)
+            {
+                Text = text;
+            }
+        }
     }
 }
