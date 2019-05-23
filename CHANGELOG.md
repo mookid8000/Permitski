@@ -8,6 +8,6 @@
 
 * Compact and non-compact format
 
-## 0.0.3
+## 0.0.4
 
 * Make it possible to use single-quotes in default output
