@@ -18,7 +18,7 @@ namespace Permitski.Tests
 
             var signedDocument = signer.Sign(emptyDocument);
 
-            Console.WriteLine($@"Here's the digned empty document:
+            Console.WriteLine($@"Here's the signed empty document:
 
 {signedDocument}");
 
