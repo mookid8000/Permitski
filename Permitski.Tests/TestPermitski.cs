@@ -2,111 +2,111 @@
 using NUnit.Framework;
 using Testy;
 
-namespace Permitski.Tests
+namespace Permitski.Tests;
+
+[TestFixture]
+public class TestPermitski : FixtureBase
 {
-    [TestFixture]
-    public class TestPermitski : FixtureBase
+    [Test]
+    public void CanSignEmptyDocument()
     {
-        [Test]
-        public void CanSignEmptyDocument()
-        {
-            var signer = new DocumentSigner(DocumentSigner.GenerateKey());
+        var signer = new DocumentSigner(DocumentSigner.GenerateKey());
 
-            Using(signer);
+        Using(signer);
 
-            var emptyDocument = new { };
+        var emptyDocument = new { };
 
-            var signedDocument = signer.Sign(emptyDocument);
+        var signedDocument = signer.Sign(emptyDocument);
 
-            Console.WriteLine($@"Here's the signed empty document:
+        Console.WriteLine($@"Here's the signed empty document:
 
 {signedDocument}");
 
-            Assert.That(signedDocument.Document, Is.EqualTo(emptyDocument));
-            Assert.That(signedDocument.Signature, Is.Not.Empty);
-        }
+        Assert.That(signedDocument.Document, Is.EqualTo(emptyDocument));
+        Assert.That(signedDocument.Signature, Is.Not.Empty);
+    }
 
-        [Test]
-        public void GetsSameSignatureWhenUsingSameKey()
-        {
-            var key = DocumentSigner.GenerateKey();
+    [Test]
+    public void GetsSameSignatureWhenUsingSameKey()
+    {
+        var key = DocumentSigner.GenerateKey();
 
-            var signer1 = Using(new DocumentSigner(key));
-            var signer2 = Using(new DocumentSigner(key));
+        var signer1 = Using(new DocumentSigner(key));
+        var signer2 = Using(new DocumentSigner(key));
 
-            var document = new { Text = "hej med dig min søde ven" };
+        var document = new { Text = "hej med dig min søde ven" };
 
-            Assert.That(signer1.Sign(document).Signature, Is.EqualTo(signer2.Sign(document).Signature));
-        }
+        Assert.That(signer1.Sign(document).Signature, Is.EqualTo(signer2.Sign(document).Signature));
+    }
 
-        [Test]
-        public void GetsDifferentSignaturesWhenUsingDifferentData()
-        {
-            var key = DocumentSigner.GenerateKey();
+    [Test]
+    public void GetsDifferentSignaturesWhenUsingDifferentData()
+    {
+        var key = DocumentSigner.GenerateKey();
 
-            var signer = Using(new DocumentSigner(key));
+        var signer = Using(new DocumentSigner(key));
 
-            var firstDocument = new { Text = "hej" };
-            var secondDocument = new { Text = "Hej" };
+        var firstDocument = new { Text = "hej" };
+        var secondDocument = new { Text = "Hej" };
 
-            Assert.That(signer.Sign(firstDocument).Signature, Is.Not.EqualTo(signer.Sign(secondDocument).Signature));
-        }
+        Assert.That(signer.Sign(firstDocument).Signature, Is.Not.EqualTo(signer.Sign(secondDocument).Signature));
+    }
 
-        [Test]
-        public void CanCheckSignature_Positive()
-        {
-            var key = DocumentSigner.GenerateKey();
-            var signer = Using(new DocumentSigner(key));
-            var document = new { Text = "okkergokkergummiklokker" };
+    [Test]
+    public void CanCheckSignature_Positive()
+    {
+        var key = DocumentSigner.GenerateKey();
+        var signer = Using(new DocumentSigner(key));
+        var document = new { Text = "okkergokkergummiklokker" };
 
-            var signed = signer.Sign(document);
+        var signed = signer.Sign(document);
 
-            Assert.That(signer.IsValid(signed), Is.True);
-        }
+        Assert.That(signer.IsValid(signed), Is.True);
+    }
 
-        [Test]
-        public void CanCheckSignature_Negative()
-        {
-            var signer1 = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
-            var signer2 = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
-            var document = new { Text = "okkergokkergummiklokker" };
+    [Test]
+    public void CanCheckSignature_Negative()
+    {
+        var signer1 = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
+        var signer2 = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
+        var document = new { Text = "okkergokkergummiklokker" };
 
-            var signed2 = signer2.Sign(document);
+        var signed2 = signer2.Sign(document);
 
-            Assert.That(signer1.IsValid(signed2), Is.False);
-        }
+        Assert.That(signer1.IsValid(signed2), Is.False);
+    }
 
-        [Test]
-        public void CanCheckSignature_Json_Positive()
-        {
-            var key = DocumentSigner.GenerateKey();
-            var signer = Using(new DocumentSigner(key));
-            var document = new { Text = "okkergokkergummiklokker" };
+    [Test]
+    public void CanCheckSignature_Json_Positive()
+    {
+        var key = DocumentSigner.GenerateKey();
+        var signer = Using(new DocumentSigner(key));
+        var document = new { Text = "okkergokkergummiklokker" };
 
-            var signed = signer.Sign(document);
+        var signed = signer.Sign(document);
 
-            var json = signed.ToString();
+        var json = signed.ToString();
 
-            Console.WriteLine($@"Checking this JSON:
+        Console.WriteLine($@"Checking this JSON:
 
 {json}");
 
-            Assert.That(signer.IsValid(json), Is.True);
-        }
+        Assert.That(signer.IsValid(json), Is.True);
+    }
 
-        [Test]
-        public void CanCheckSignature_Json_Negative()
-        {
-            var signer1 = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
-            var signer2 = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
-            var document = new { Text = "okkergokkergummiklokker" };
+    [Test]
+    public void CanCheckSignature_Json_Negative()
+    {
+        var signer1 = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
+        var signer2 = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
+        var document = new { Text = "okkergokkergummiklokker" };
 
-            var signed2 = signer2.Sign(document);
+        var signed2 = signer2.Sign(document);
 
-            Assert.That(signer1.IsValid(signed2.ToString()), Is.False);
-        }
+        Assert.That(signer1.IsValid(signed2.ToString()), Is.False);
+    }
 
-        [TestCase(@"
+    [TestCase(@"
 
 {
   ""Document"": {
@@ -116,7 +116,7 @@ namespace Permitski.Tests
 }
 
 ")]
-        [TestCase(@"
+    [TestCase(@"
 
 {
   ""Signature"": ""l8RlgY4WZF0iDfgOh3ftCgfr/eicN2ltBEhOXhPTlIs="",
@@ -126,44 +126,43 @@ namespace Permitski.Tests
 }
 
 ")]
-        [TestCase(@"{""Signature"": ""l8RlgY4WZF0iDfgOh3ftCgfr/eicN2ltBEhOXhPTlIs="",""Document"": {""Text"": ""okkergokkergummiklokker""}}")]
-        public void CanCheckSignature_Json_Reformatting(string jsonDocumentWithValidSignature)
-        {
-            const string key = "TNm1TDf3V5lLHZRFU3rGmC+9u3pIfuOOB0tmTpWXvLQ=|S+UfLmShvBPL56JkdgKyFg==";
+    [TestCase(@"{""Signature"": ""l8RlgY4WZF0iDfgOh3ftCgfr/eicN2ltBEhOXhPTlIs="",""Document"": {""Text"": ""okkergokkergummiklokker""}}")]
+    public void CanCheckSignature_Json_Reformatting(string jsonDocumentWithValidSignature)
+    {
+        const string key = "TNm1TDf3V5lLHZRFU3rGmC+9u3pIfuOOB0tmTpWXvLQ=|S+UfLmShvBPL56JkdgKyFg==";
 
-            var signer = Using(new DocumentSigner(key));
+        var signer = Using(new DocumentSigner(key));
 
-            Console.WriteLine($@"Checking this variation:
+        Console.WriteLine($@"Checking this variation:
 
 {jsonDocumentWithValidSignature}");
 
-            Assert.That(signer.IsValid(jsonDocumentWithValidSignature), Is.True);
-        }
+        Assert.That(signer.IsValid(jsonDocumentWithValidSignature), Is.True);
+    }
 
-        [Test]
-        public void CanDeserializeDocument()
-        {
-            var signer = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
+    [Test]
+    public void CanDeserializeDocument()
+    {
+        var signer = Using(new DocumentSigner(DocumentSigner.GenerateKey()));
 
-            const string importantText = "blah blah blah important blah blah";
+        const string importantText = "blah blah blah important blah blah";
             
-            var signed = signer.Sign(new MyDoc(importantText));
+        var signed = signer.Sign(new MyDoc(importantText));
 
-            var json = signed.ToString();
+        var json = signed.ToString();
 
-            var roundtrippedSignedDocument = signer.Deserialize<MyDoc>(json);
+        var roundtrippedSignedDocument = signer.Deserialize<MyDoc>(json);
 
-            Assert.That(roundtrippedSignedDocument.Document.Text, Is.EqualTo(importantText));
-        }
+        Assert.That(roundtrippedSignedDocument.Document.Text, Is.EqualTo(importantText));
+    }
 
-        class MyDoc
+    class MyDoc
+    {
+        public string Text { get; }
+
+        public MyDoc(string text)
         {
-            public string Text { get; }
-
-            public MyDoc(string text)
-            {
-                Text = text;
-            }
+            Text = text;
         }
     }
 }
