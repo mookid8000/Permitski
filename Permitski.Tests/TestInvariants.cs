@@ -27,6 +27,24 @@ public class TestInvariants : FixtureBase
         Assert.That(json, Is.EqualTo(@"{""Text"":""HEJ MED DIG"",""Children"":[{""AnotherText"":""HEJ IGEN 1"",""ListOfIntegers"":[1,2,3]},{""AnotherText"":""HEJ IGEN 2"",""ListOfIntegers"":[1,2,3,4,5]},{""AnotherText"":""HEJ IGEN 3"",""ListOfIntegers"":[1,2,3,4,5,6,7]}]}"));
     }
 
+    [Test]
+    public void TestSignature()
+    {
+        var key = "Am/w5KeD4GEZzudvwucveBAHIxucC/cYNuEwFOFK4j0=|8rI4OAvVM4Opic0DrxEiVQ==";
+
+        using var signer = new DocumentSigner(key);
+
+        var signed = signer.Sign(new SimpleDocument("hej"));
+
+        var json = signed.ToString(compact: true);
+
+        Console.WriteLine(json);
+
+        Assert.That(json, Is.EqualTo("{'Document':{'Text':'hej'},'Signature':'Ql8cwk1bFMjKCftWlj3K9NlD59c3Y0KoQMPnVcff/O8='}"));
+    }
+
+    record SimpleDocument(string Text);
+
     record RootDocument(string Text, IReadOnlyList<ChildDocument> Children);
 
     record ChildDocument(string AnotherText, IReadOnlyList<int> ListOfIntegers);
