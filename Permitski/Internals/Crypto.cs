@@ -5,7 +5,7 @@ namespace Permitski.Internals;
 
 class Crypto
 {
-    public static AesCryptoServiceProvider GetFromKey(string key)
+    public static Aes GetFromKey(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
         {
@@ -46,7 +46,7 @@ Please ensure that the key IS NOT SHARED WITH ANYONE!", e);
     public static string GenerateNewKey()
     {
         using var provider = NewProvider();
-        
+
         provider.GenerateIV();
         provider.GenerateKey();
 
@@ -56,5 +56,10 @@ Please ensure that the key IS NOT SHARED WITH ANYONE!", e);
         return $"{key}|{iv}";
     }
 
-    static AesCryptoServiceProvider NewProvider() => new() { KeySize = 256 };
+    static Aes NewProvider()
+    {
+        var newProvider = Aes.Create();
+        newProvider.KeySize = 256;
+        return newProvider;
+    }
 }

@@ -12,7 +12,7 @@ public class DocumentSigner : IDisposable
 {
     public static string GenerateKey() => Crypto.GenerateNewKey();
 
-    readonly AesCryptoServiceProvider _cryptoServiceProvider;
+    readonly Aes _cryptoServiceProvider;
 
     bool _disposed;
 
