@@ -3,7 +3,7 @@ using System.Security.Cryptography;
 
 namespace Permitski.Internals;
 
-class Crypto
+class SymmetricCrypto
 {
     public static SymmetricAlgorithm GetFromKey(string key)
     {

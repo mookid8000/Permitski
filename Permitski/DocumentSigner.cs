@@ -10,7 +10,7 @@ namespace Permitski;
 
 public class DocumentSigner : IDisposable
 {
-    public static string GenerateKey() => Crypto.GenerateNewKey();
+    public static string GenerateKey() => SymmetricCrypto.GenerateNewKey();
 
     readonly SymmetricAlgorithm _cryptoServiceProvider;
 
@@ -19,7 +19,7 @@ public class DocumentSigner : IDisposable
     public DocumentSigner(string key)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
-        _cryptoServiceProvider = Crypto.GetFromKey(key);
+        _cryptoServiceProvider = SymmetricCrypto.GetFromKey(key);
     }
 
     public Signed<TDocument> Sign<TDocument>(TDocument document)
