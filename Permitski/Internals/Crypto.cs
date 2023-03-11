@@ -5,7 +5,7 @@ namespace Permitski.Internals;
 
 class Crypto
 {
-    public static Aes GetFromKey(string key)
+    public static SymmetricAlgorithm GetFromKey(string key)
     {
         if (string.IsNullOrWhiteSpace(key))
         {
