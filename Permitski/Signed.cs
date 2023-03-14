@@ -26,10 +26,14 @@ public class Signed<T>
 
         using var output = new StringWriter(builder);
         using var writer = new JsonTextWriter(output);
-        
+
         writer.QuoteChar = singleQuotes ? '\'' : '\"';
 
-        var serializer = new JsonSerializer { Formatting = formatting };
+        var serializer = new JsonSerializer
+        {
+            Formatting = formatting, 
+            NullValueHandling = NullValueHandling.Ignore
+        };
         serializer.Serialize(writer, this);
 
         return builder.ToString();

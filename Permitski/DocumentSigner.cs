@@ -12,9 +12,13 @@ public class DocumentSigner : IDisposable
 {
     public static string GenerateKey() => SymmetricCrypto.GenerateNewKey();
 
+    static readonly JsonSerializerSettings SerializerSettings = new() { NullValueHandling = NullValueHandling.Ignore };
+
     readonly SymmetricAlgorithm _cryptoServiceProvider;
 
     bool _disposed;
+    static readonly string SignatureFieldName = nameof(Signed<object>.Signature);
+    static readonly string DocumentFieldName = nameof(Signed<object>.Document);
 
     public DocumentSigner(string key)
     {
@@ -51,12 +55,8 @@ public class DocumentSigner : IDisposable
         {
             var jObject = JObject.Parse(json);
 
-            var expectedSignature = (jObject[nameof(Signed<object>.Signature)]
-                                     ?? throw new ArgumentException("Could not find 'Signature' element"))
-                .Value<string>();
-
-            var document = jObject[nameof(Signed<object>.Document)]
-                           ?? throw new ArgumentException("Could not find 'Document' element");
+            var expectedSignature = (jObject[SignatureFieldName] ?? throw new ArgumentException("Could not find 'Signature' element")).Value<string>();
+            var document = jObject[DocumentFieldName] ?? throw new ArgumentException("Could not find 'Document' element");
 
             var jsonToSign = document.ToString(Formatting.None);
             var actualSignature = GenerateSignatureFromString(jsonToSign);
@@ -79,22 +79,22 @@ public class DocumentSigner : IDisposable
 
     string GenerateSignatureFromObject(object document)
     {
-        var jsonToSign = JsonConvert.SerializeObject(document);
+        var jsonToSign = JsonConvert.SerializeObject(document, SerializerSettings);
         return GenerateSignatureFromString(jsonToSign);
     }
 
     string GenerateSignatureFromString(string json)
     {
         using var hashish = SHA1.Create();
-        
+
         var jsonBytes = Encoding.UTF8.GetBytes(json);
-        
+
         using var inputStream = new MemoryStream(jsonBytes);
-        
+
         var hashBytes = hashish.ComputeHash(inputStream);
         var digest = Encrypt(Convert.ToBase64String(hashBytes));
         var signature = Convert.ToBase64String(digest);
-        
+
         return signature;
     }
 
@@ -105,10 +105,10 @@ public class DocumentSigner : IDisposable
         using var encryptor = _cryptoServiceProvider.CreateEncryptor();
         using var destination = new MemoryStream();
         using var cryptoStream = new CryptoStream(destination, encryptor, CryptoStreamMode.Write);
-        
+
         cryptoStream.Write(bytes, 0, bytes.Length);
         cryptoStream.FlushFinalBlock();
-        
+
         return destination.ToArray();
     }
 

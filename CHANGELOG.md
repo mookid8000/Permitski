@@ -14,3 +14,6 @@
 
 ## 0.0.6
 * Update Newtonsoft dependency to 13.0.3
+
+## 0.0.7
+* Omit fields that are NULL
