@@ -6,16 +6,10 @@ using Newtonsoft.Json;
 
 namespace Permitski;
 
-public class Signed<T>
+public class Signed<T>(T document, string signature)
 {
-    public T Document { get; }
-    public string Signature { get; }
-
-    public Signed(T document, string signature)
-    {
-        Document = document ?? throw new ArgumentNullException(nameof(document));
-        Signature = signature ?? throw new ArgumentNullException(nameof(signature));
-    }
+    public T Document { get; } = document ?? throw new ArgumentNullException(nameof(document));
+    public string Signature { get; } = signature ?? throw new ArgumentNullException(nameof(signature));
 
     public override string ToString() => ToString(compact: false, singleQuotes: false);
 
