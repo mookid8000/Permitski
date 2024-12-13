@@ -8,8 +8,14 @@ using Permitski.Internals;
 
 namespace Permitski;
 
+/// <summary>
+/// Use this to perform the necessary actions for creating signed documents and validating existing ones.
+/// </summary>
 public class DocumentSigner : IDisposable
 {
+    /// <summary>
+    /// Cann this to generate a new signing key. The key is symmetric, so you need this key both for signing and validating.
+    /// </summary>
     public static string GenerateKey() => SymmetricCrypto.GenerateNewKey();
 
     static readonly JsonSerializerSettings SerializerSettings = new() { NullValueHandling = NullValueHandling.Ignore };
@@ -20,18 +26,27 @@ public class DocumentSigner : IDisposable
     static readonly string SignatureFieldName = nameof(Signed<object>.Signature);
     static readonly string DocumentFieldName = nameof(Signed<object>.Document);
 
+    /// <summary>
+    /// Creates the <see cref="DocumentSigner"/> with the given <paramref name="key"/>. Call <see cref="GenerateKey"/> if you need a new key.
+    /// </summary>
     public DocumentSigner(string key)
     {
         if (key == null) throw new ArgumentNullException(nameof(key));
         _cryptoServiceProvider = SymmetricCrypto.GetFromKey(key);
     }
 
+    /// <summary>
+    /// Returns the <paramref name="document"/> wrapped in a <see cref="Signed{T}"/> containing the signature.
+    /// </summary>
     public Signed<TDocument> Sign<TDocument>(TDocument document)
     {
         if (document == null) throw new ArgumentNullException(nameof(document));
         return new Signed<TDocument>(document, GenerateSignatureFromObject(document));
     }
 
+    /// <summary>
+    /// Deserializes (but DOESN'T VALIDATE!) the serialized signed document <paramref name="json"/> into a <see cref="Signed{T}"/> containing <typeparamref name="TDocument"/>
+    /// </summary>
     public Signed<TDocument> Deserialize<TDocument>(string json)
     {
         Signed<TDocument> Parse()
@@ -49,6 +64,9 @@ public class DocumentSigner : IDisposable
         return Parse();
     }
 
+    /// <summary>
+    /// Determines whether the given <paramref name="json"/> is valid. This is done by deserializing it to a dynamic JSON object and then verifying that the signature is valid.
+    /// </summary>
     public bool IsValid(string json)
     {
         try
@@ -69,6 +87,10 @@ public class DocumentSigner : IDisposable
         }
     }
 
+    /// <summary>
+    /// Determines whether the given <paramref name="signed"/> document is valid.
+    /// This is done by serializing the wrapped document to JSON object and then verifying that the signature is valid.
+    /// </summary>
     public bool IsValid<TDocument>(Signed<TDocument> signed)
     {
         if (signed == null) throw new ArgumentNullException(nameof(signed));
@@ -112,6 +134,9 @@ public class DocumentSigner : IDisposable
         return destination.ToArray();
     }
 
+    /// <summary>
+    /// Disposes the wrapped crypto provider
+    /// </summary>
     public void Dispose()
     {
         if (_disposed) return;

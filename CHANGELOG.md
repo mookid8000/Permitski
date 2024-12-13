@@ -17,3 +17,6 @@
 
 ## 0.0.7
 * Omit fields that are NULL
+
+## 0.0.8
+* Niftify package

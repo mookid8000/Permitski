@@ -8,7 +8,7 @@ using Testy;
 namespace Permitski.Tests;
 
 [TestFixture]
-[Explicit("Just play aroudn with it")]
+[Explicit("Just play around with it")]
 public class TestAsymmetricCrypto : FixtureBase
 {
     [Test]

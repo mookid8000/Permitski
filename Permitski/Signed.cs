@@ -6,13 +6,30 @@ using Newtonsoft.Json;
 
 namespace Permitski;
 
-public class Signed<T>(T document, string signature)
+/// <summary>
+/// Wrapper class for a signed document of type <typeparamref name="TDocument"/>.
+/// </summary>
+public class Signed<TDocument>(TDocument document, string signature)
 {
-    public T Document { get; } = document ?? throw new ArgumentNullException(nameof(document));
+    /// <summary>
+    /// Gets the wrapped document
+    /// </summary>
+    public TDocument Document { get; } = document ?? throw new ArgumentNullException(nameof(document));
+
+    /// <summary>
+    /// Gets the attached signature
+    /// </summary>
     public string Signature { get; } = signature ?? throw new ArgumentNullException(nameof(signature));
 
+    /// <summary>
+    /// Renders the signed document into its default JSON representation
+    /// </summary>
+    /// <returns></returns>
     public override string ToString() => ToString(compact: false, singleQuotes: false);
 
+    /// <summary>
+    /// Renders the signed document into a JSON representation using the given flags for customization.
+    /// </summary>
     public string ToString(bool compact, bool singleQuotes = true)
     {
         var builder = new StringBuilder();
@@ -28,6 +45,7 @@ public class Signed<T>(T document, string signature)
             Formatting = formatting, 
             NullValueHandling = NullValueHandling.Ignore
         };
+
         serializer.Serialize(writer, this);
 
         return builder.ToString();

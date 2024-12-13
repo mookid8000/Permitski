@@ -9,7 +9,7 @@ class SymmetricCrypto
     {
         if (string.IsNullOrWhiteSpace(key))
         {
-            throw NewCryptographicHelpException(null, @"KeyMan created with an empty key as argument.");
+            throw NewCryptographicHelpException(null, "KeyMan created with an empty key as argument.");
         }
 
         try
@@ -24,7 +24,7 @@ class SymmetricCrypto
         }
         catch (Exception e)
         {
-            throw NewCryptographicHelpException(e, @"KeyMan created with an invalid key as argument - you need to specify a key in order to use the KeyMan!");
+            throw NewCryptographicHelpException(e, "KeyMan created with an invalid key as argument - you need to specify a key in order to use the KeyMan!");
         }
     }
 
