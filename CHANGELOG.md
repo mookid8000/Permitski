@@ -20,3 +20,6 @@
 
 ## 0.0.8
 * Niftify package
+
+## 0.0.9
+* Update deps
